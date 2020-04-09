@@ -12,7 +12,7 @@ limiter = Limiter(app, key_func=get_remote_address)
 
 QRcode(app)
 
-if app.config['DEBUG']:
+if app.config["DEBUG"]:
     import logging
     import http.client
 
@@ -25,5 +25,5 @@ if app.config['DEBUG']:
     requests_log.propagate = True
 
 
-if __name__ == '__main__':
-    app.run('0.0.0.0', debug=app.config['DEBUG'])
+if __name__ == "__main__":
+    app.run("0.0.0.0", debug=app.config["DEBUG"])
