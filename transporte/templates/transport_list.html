@@ -2,7 +2,19 @@
 {% from "_formhelper.html" import trim %}
 
 {% block meta %}
-<meta http-equiv="refresh" content="300;">
+    <meta http-equiv="refresh" content="300;">
+    {% assets "dataTables_css" %}
+        <link rel="stylesheet" type="text/css" href="{{ ASSET_URL }}" />
+    {% endassets %}
+    {% assets "dataTables_js" %}
+        <script type="text/javascript" src="{{ ASSET_URL }}"></script>
+    {% endassets %}
+    {% assets "fullcalendar_css" %}
+        <link rel="stylesheet" type="text/css" href="{{ ASSET_URL }}" />
+    {% endassets %}
+    {% assets "fullcalendar_js" %}
+        <script type="text/javascript" src="{{ ASSET_URL }}"></script>
+    {% endassets %}
 {% endblock %}
 
 {% block content %}

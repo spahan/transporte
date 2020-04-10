@@ -10,24 +10,14 @@
 
     <title>{{ app_name }}</title>
 
+    {% assets "boostrap_css" %}
+        <link rel="stylesheet" type="text/css" href="{{ ASSET_URL }}" />
+    {% endassets %}
+    {% assets "boostrap_js" %}
+        <script type="text/javascript" src="{{ ASSET_URL }}"></script>
+    {% endassets %}
     {% block meta %}{% endblock %}
 
-    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/fa-v5.5.0-all.css') }}">
-
-    <link rel="stylesheet" type="text/css"
-          href="{{ url_for('static', filename='css/bootstrap-4.1.1.min.css') }}"/>
-    <link rel="stylesheet" type="text/css"
-          href="{{ url_for('static', filename='css/dataTables-1.10.18.bootstrap4.min.css') }}"/>
-
-    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/main.css') }}"/>
-
-    <script type="text/javascript" src="{{ url_for('static', filename='js/jquery-3.3.1.min.js') }}"></script>
-    <script type="text/javascript"
-            src="{{ url_for('static', filename='js/bootstrap-4.1.1.min.js') }}"></script>
-    <script type="text/javascript"
-            src="{{ url_for('static', filename='js/jquery.dataTables-1.10.18.min.js') }}"></script>
-    <script type="text/javascript"
-            src="{{ url_for('static', filename='js/dataTables-1.10.18.bootstrap4.min.js') }}"></script>
 </head>
 
 <body>
