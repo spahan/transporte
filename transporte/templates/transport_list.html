@@ -25,9 +25,8 @@
         <a href="{{ url_for('edit_transport') }}">Add Transport</a>
     </div>
     <div class="col-sm-6" style="text-align: right">
-        <label style="margin-right: 20px; font-weight: normal; white-space: nowrap; text-align: left;">
-            <input type="checkbox" id="hideDone" /> hide done</label>
         <form method="GET" style="margin-left: 0.5em; display: inline-block; width: auto;">
+            {{ filterform.hide_done(**{'onchange': 'this.form.submit()'}) }} hide done
             {{ filterform.day(**{'onchange': 'this.form.submit()'}) }}
         </form>
     </div>
@@ -96,21 +95,12 @@
     {% endfor %}
     </tbody>
 </table>
+<hr>
+<div id="calendar"></div>
 
 <script type="text/javascript">
     var table;
-
-    function updateHideDone() {
-        if ($('#hideDone').is(':checked')) {
-            $.fn.dataTable.ext.search.push(
-                function (settings, data, dataIndex) {
-                    return data[12] == "open";
-                });
-        } else {
-            $.fn.dataTable.ext.search.pop();
-        }
-        table.draw()
-    }
+     var calendar
 
     $(document).ready(function () {
         table = $('#transportlist').DataTable( {
@@ -123,16 +113,41 @@
             }]
         });
 
-        $('#hideDone').on('change', function() {
-            localStorage.setItem('hideDone', $(this).is(':checked'));
-            updateHideDone()
+        calendar = new FullCalendar.Calendar($('#calendar')[0], {
+            plugins: ['dayGrid','timeGrid','list'],
+            defaultView: 'listCustom',
+            header: {
+                left: 'prev,next today',
+                center: 'title',
+                right: 'timeGridWeek,timeGridDay,listCustom'
+            },
+            views: {
+                listCustom:{
+                    type: 'list',
+                    visibleRange:function(currentDate) {
+                        var startDate = new Date('{{ transportlist[0].date}}');
+                        var endDate = new Date('{{ transportlist[-1].date}}')
+                        return { start: startDate, end: endDate };
+                    },
+                }
+            },
+            events: [
+            {% for transport in transportlist %}
+                {
+                    title: '{{ transport.goods }}',
+                    start: '{{ transport.date }} {{ transport.time }}',
+                    className: {% if transport.cancelled %}'bg-secondary text-decoration-line-through'
+                        {% elif transport.done%}'bg-success;'
+                        {% elif transport.date < today %}'bg-danger'
+                        {% elif transport.date == today %}'bg-warning'
+                        {% else %}'bg-primary'
+                        {% endif %},
+                },
+            {% endfor %}
+            ]
         });
-
-        if (localStorage.getItem('hideDone') === "true") {
-            $('#hideDone').prop('checked', true);
-        }
-
-        updateHideDone()
+        calendar.render()
+        window.cal = calendar
     });
 </script>
 {% endblock  %}
