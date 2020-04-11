@@ -2,11 +2,12 @@ from flask import current_app as app, url_for
 from flask_assets import Bundle
 
 bundles = {
-    'boostrap_css' : Bundle(
+    'base_css' : Bundle(
         'css/fa-v5.5.0-all.css',
         'css/bootstrap-4.1.1.min.css',
+        'css/main.css',
         output='gen/boot.css'),
-    'boostrap_js': Bundle(
+    'base_js': Bundle(
         'js/jquery-3.3.1.min.js',
         'js/bootstrap-4.1.1.min.js',
         output='gen/boot.js'),
