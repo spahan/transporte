@@ -20,11 +20,13 @@ bundles = {
         'fc/packages/daygrid/main.css',
         'fc/packages/timegrid/main.css',
         'fc/packages/list/main.css',
+        filters='cssmin',
         output='gen/cal.css'),
     'fullcalendar_js': Bundle(
         'fc/packages/core/main.js',
         'fc/packages/daygrid/main.js',
         'fc/packages/timegrid/main.js',
         'fc/packages/list/main.js',
+        filters='jsmin',
         output='gen/cal.js')
 }

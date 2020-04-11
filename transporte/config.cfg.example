@@ -1,9 +1,17 @@
 APP_NAME = 'c3loc transports'
 
+# Set to true to make more verbose and simplifies debugging
 DEBUG = False
+# if set to true, html assets (js,css) will not be monified and concated
+ASSETS_DEBUG = False
+
+# used to encrypt login cookies
 SECRET_KEY = 'YOURSECRETKEYHERE'
+
+# mus be writeable for the user running flask
 UPLOAD_DIR = 'uploads'
 
+# database setup
 SQLALCHEMY_DATABASE_URI = 'sqlite:///app.db'
 SQLALCHEMY_TRACK_MODIFICATIONS = False
 
@@ -18,6 +26,7 @@ MAIL_PASSWORD = 'SMTP_PASS'
 MAIL_DEFAULT_SENDER = 'no-reply@YOURDOMAIN.de'
 
 
+# zammad integration
 ZAMMAD_HOST = 'zammad host'
 ZAMMAD_USER = 'user'
 ZAMMAD_PASS = 'pass'
