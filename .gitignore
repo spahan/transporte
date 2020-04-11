@@ -1,7 +1,14 @@
 .idea
+transporte.geany
 __pycache__
 *.db
 venv
 *.cfg
 uploads/*
 *.egg-info
+transporte/static/fc/examples
+transporte/static/fc/LICENSE.txt
+transporte/static/fc/README.md
+transporte/static/fc/vendor
+transporte/static/gen
+transporte/static/.webassets-cache/
