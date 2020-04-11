@@ -437,6 +437,9 @@ def format_datetime(value):
 
 _paragraph_re = re.compile(r"(?:\r\n|\r|\n)")
 
+@evalcontextfilter
+def oneline(eval_ctx, value):
+    return u";".join(_paragraph_re.split(escape(value)))
 
 @evalcontextfilter
 def nl2br(eval_ctx, value):
@@ -447,6 +450,7 @@ def nl2br(eval_ctx, value):
 
 
 app.jinja_env.filters["datetime"] = format_datetime
+app.jinja_env.filters["oneline"] = oneline
 app.jinja_env.filters["nl2br"] = nl2br
 
 

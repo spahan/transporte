@@ -134,7 +134,7 @@
             events: [
             {% for transport in transportlist %}
                 {
-                    title: '{{ transport.goods }}',
+                    title: '{{ transport.goods | oneline }}',
                     start: '{{ transport.date }} {{ transport.time }}',
                     className: {% if transport.cancelled %}'bg-secondary text-decoration-line-through'
                         {% elif transport.done%}'bg-success;'
