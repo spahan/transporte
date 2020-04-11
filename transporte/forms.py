@@ -75,3 +75,4 @@ class RoleForm(FlaskForm):
 
 class TransportFilterForm(FlaskForm):
     day = SelectField("Day", choices=[])
+    hide_done = BooleanField("hide done")

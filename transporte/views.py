@@ -214,7 +214,7 @@ def list_transports():
         .all()
     )
 
-    filterform = TransportFilterForm(day=request.args.get("day"))
+    filterform = TransportFilterForm(day=request.args.get("day"),hide_done=request.args.get("hide_done"))
     filterform.day.choices = [("None", "Filter by date")] + [
         (date[0], date[0]) for date in dates
     ]
@@ -223,6 +223,11 @@ def list_transports():
         transportlist = transportlist.filter(
             Transport.date == parser.parse(filterform.day.data).date()
         )
+    if filterform.hide_done.data:
+        transportlist = transportlist.filter(Transport.done == False )
+        transportlist = transportlist.filter(Transport.cancelled == False)
+
+    transportlist = transportlist.order_by(Transport.date)
 
     return render_template(
         "transport_list.html", transportlist=transportlist, filterform=filterform
