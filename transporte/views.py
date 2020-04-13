@@ -214,7 +214,7 @@ def list_transports():
         .all()
     )
 
-    filterform = TransportFilterForm(day=request.args.get("day"),hide_done=request.args.get("hide_done"))
+    filterform = TransportFilterForm(day=request.args.get("day"), hide_done=request.args.get("hide_done"))
     filterform.day.choices = [("None", "Filter by date")] + [
         (date[0], date[0]) for date in dates
     ]
@@ -224,10 +224,13 @@ def list_transports():
             Transport.date == parser.parse(filterform.day.data).date()
         )
     if filterform.hide_done.data:
-        transportlist = transportlist.filter(Transport.done == False )
+        transportlist = transportlist.filter(Transport.done == False)
         transportlist = transportlist.filter(Transport.cancelled == False)
 
     transportlist = transportlist.order_by(Transport.date)
+
+    if transportlist.count() == 0:
+        abort(404)
 
     return render_template(
         "transport_list.html", transportlist=transportlist, filterform=filterform
@@ -437,9 +440,11 @@ def format_datetime(value):
 
 _paragraph_re = re.compile(r"(?:\r\n|\r|\n)")
 
+
 @evalcontextfilter
 def oneline(eval_ctx, value):
     return u";".join(_paragraph_re.split(escape(value)))
+
 
 @evalcontextfilter
 def nl2br(eval_ctx, value):
