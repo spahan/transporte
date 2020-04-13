@@ -37,7 +37,9 @@ pip install --editable .
 ## create database
 ```
 python -i
->>> from transporte.transporte import db
+>>> from transporte import create_app, db
+>>> app = create_app()
+>>> app.app_context().push()
 >>> db.create_all()
 ```
 
