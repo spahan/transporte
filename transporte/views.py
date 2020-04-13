@@ -1,10 +1,9 @@
-import datetime
 import os
 import re
+from datetime import datetime
 
 import babel
 from dateutil import parser
-from email_validator import validate_email
 from flask import Markup, abort
 from flask import current_app as app
 from flask import (
@@ -16,10 +15,12 @@ from flask import (
     send_from_directory,
     url_for,
 )
-from flask_login import current_user, login_required, login_user, logout_user
-from flask_wtf import FlaskForm
 from jinja2 import evalcontextfilter
 from werkzeug.utils import secure_filename
+
+from email_validator import validate_email
+from flask_login import current_user, login_required, login_user, logout_user
+from flask_wtf import FlaskForm
 
 from . import db, login_manager
 from .forms import (
@@ -43,21 +44,34 @@ def index():
         dict(description="Overall transports", progress=100,),
     )
 
-    query = Transport.query.filter(not Transport.cancelled)
+    today_start = datetime.combine(datetime.today().date(), datetime.min.time())
+    today_end = datetime.combine(datetime.today().date(), datetime.max.time())
+    transports_all = Transport.query.filter(
+        Transport.state is not Transport.TransportState.cancelled
+    )
+    transports_today = transports_all.filter(Transport.start >= today_start).filter(
+        Transport.start <= today_end
+    )
 
     try:
         todo[0]["progress"] = (
             100
-            / query.filter(Transport.date == datetime.date.today()).count()
-            * query.filter(Transport.date == datetime.date.today())
-            .filter(Transport.done)
-            .count()
+            / transports_today.count()
+            * transports_today.filter(
+                Transport.state is Transport.TransportState.done
+            ).count()
         )
     except ZeroDivisionError:
         pass
 
     try:
-        todo[1]["progress"] = 100 / query.count() * query.filter(Transport.done).count()
+        todo[1]["progress"] = (
+            100
+            / transports_all.count()
+            * transports_all.filter(
+                Transport.state is Transport.TransportState.done
+            ).count()
+        )
     except ZeroDivisionError:
         pass
 
@@ -207,27 +221,30 @@ def list_transports():
     if current_user.role not in ["helpdesk", "admin"]:
         transportlist = transportlist.filter(Transport.user_id == current_user.id)
 
-    dates = (
-        transportlist.with_entities(Transport.date)
-        .distinct()
-        .order_by(Transport.date)
-        .all()
+    filterform = TransportFilterForm(
+        day=request.args.get("day"), hide_done=request.args.get("hide_done")
+    )
+    filterform.day.choices = [("None", "Filter by date")] + sorted(
+        set(
+            [
+                (str(date[0].date()), str(date[0].date()))
+                for date in transportlist.with_entities(Transport.start).all()
+            ]
+        )
     )
 
-    filterform = TransportFilterForm(day=request.args.get("day"), hide_done=request.args.get("hide_done"))
-    filterform.day.choices = [("None", "Filter by date")] + [
-        (date[0], date[0]) for date in dates
-    ]
-
     if filterform.day.data != "None":
-        transportlist = transportlist.filter(
-            Transport.date == parser.parse(filterform.day.data).date()
+        date = parser.parse(filterform.day.data)
+        filter_start = datetime.combine(date.date(), datetime.min.time())
+        filter_end = datetime.combine(date.date(), datetime.max.time())
+        transportlist = transportlist.filter(Transport.start >= filter_start).filter(
+            Transport.start <= filter_end
         )
     if filterform.hide_done.data:
         transportlist = transportlist.filter(Transport.done == False)
         transportlist = transportlist.filter(Transport.cancelled == False)
 
-    transportlist = transportlist.order_by(Transport.date)
+    transportlist = transportlist.order_by(Transport.start)
 
     if transportlist.count() == 0:
         abort(404)
@@ -466,7 +483,7 @@ def inject_global_template_vars():
 
 @app.context_processor
 def inject_today():
-    return dict(today=datetime.date.today())
+    return dict(today=datetime.today().date())
 
 
 @login_manager.user_loader
