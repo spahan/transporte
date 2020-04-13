@@ -52,14 +52,14 @@
     </thead>
     <tbody>
     {% for transport in transportlist %}
-    <tr class={% if transport.cancelled %}
+    <tr class={% if transport.state == transport.TransportState.cancelled %}
     "table-secondary" style="text-decoration: line-through;">
-    {% elif transport.done %}"table-success">
+    {% elif transport.state == transport.TransportState.done %}"table-success">
     {% elif transport.start.date() < today %}"table-danger">
     {% elif transport.start.date() == today %}"table-warning">
     {% else %}"">
     {% endif %}
-    <th scope="row"><a href="{{ url_for('show_transport', id=transport.id) }}">{{ transport.id }}</a></th>
+    <th scope="row"><a href="{{ url_for('show_transport', id=transport.id) }}">{{ transport.id }}{{ transport.state}}</a></th>
     <td>{% if transport.needs_organization %}<i class="fas fa-exclamation-triangle"></i>{% endif %}</td>
     <td class="text-nowrap">{{ transport.start.strftime('%Y-%m-%d') }}</td>
     <td class="text-nowrap">{{ transport.start.strftime('%H:%M') if transport.start is not none }}</td>
@@ -136,8 +136,8 @@
                 {
                     title: '{{ transport.goods | oneline }} """{{ transport.vehicle.name }}"""',
                     start: '{{ transport.start }}',
-                    className: {% if transport.cancelled %}'bg-secondary text-decoration-line-through'
-                        {% elif transport.done%}'bg-success'
+                    className: {% if transport.state == transport.TransportState.cancelled %}'bg-secondary text-decoration-line-through'
+                        {% elif transport.state == transport.TransportState.done %}'bg-success'
                         {% elif transport.start.date() < today %}'bg-danger'
                         {% elif transport.start.date() == today %}'bg-warning'
                         {% else %}'bg-primary'
