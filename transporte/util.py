@@ -2,7 +2,7 @@ from flask import current_app as app, url_for
 from flask_assets import Bundle
 
 bundles = {
-    'base_css' : Bundle(
+    'base_css': Bundle(
         'css/fa-v5.5.0-all.css',
         'css/bootstrap-4.1.1.min.css',
         'css/main.css',
@@ -13,7 +13,7 @@ bundles = {
         output='gen/boot.js'),
     'dataTables_css': Bundle(
         'css/dataTables-1.10.18.bootstrap4.min.css'),
-    'dataTables_js' : Bundle(
+    'dataTables_js': Bundle(
         'js/jquery.dataTables-1.10.18.min.js',
         'js/dataTables-1.10.18.bootstrap4.min.js'),
     'fullcalendar_css': Bundle(
