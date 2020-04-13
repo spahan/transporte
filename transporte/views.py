@@ -241,8 +241,12 @@ def list_transports():
             Transport.start <= filter_end
         )
     if filterform.hide_done.data:
-        transportlist = transportlist.filter(Transport.done == False)
-        transportlist = transportlist.filter(Transport.cancelled == False)
+        transportlist = transportlist.filter(
+            Transport.state != Transport.TransportState.done
+        )
+        transportlist = transportlist.filter(
+            Transport.state != Transport.TransportState.cancelled
+        )
 
     transportlist = transportlist.order_by(Transport.start)
 
@@ -290,10 +294,10 @@ def mark_transport(mark, id=None):
     ):
         transport = None
         flash("Transport not available")
-    elif transport.done:
+    elif transport.state == Transport.TransportState.done:
         flash("Transport already marked as done!")
         transport = None
-    elif transport.cancelled:
+    elif transport.state == Transport.TransportState.cancelled:
         flash("Transport cancelled!")
         transport = None
 
@@ -301,9 +305,9 @@ def mark_transport(mark, id=None):
 
     if form.validate_on_submit():
         if mark == "done" and current_user.role in ["helpdesk", "admin"]:
-            transport.done = True
+            transport.state = Transport.TransportState.done
         elif mark == "cancelled":
-            transport.cancelled = True
+            transport.state = Transport.TransportState.cancelled
 
         #
         # close ticket
